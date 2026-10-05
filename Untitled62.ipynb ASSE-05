@@ -1,0 +1,532 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyP0PrlQoquUIXl1Ys86OUwV",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/SkHaneef5626/Compiler-Design/blob/main/Untitled62.ipynb%20ASSE-05\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Email ID Validation System**"
+      ],
+      "metadata": {
+        "id": "ePYrX1rHgD0D"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!apt-get update -qq\n",
+        "!apt-get install -y flex gcc -qq\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "b4fqg0nmgM-R",
+        "outputId": "e55d27e8-eab6-459e-e634-8b20b988fa2f"
+      },
+      "execution_count": 28,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "W: Skipping acquire of configured file 'main/source/Sources' as repository 'https://r2u.stat.illinois.edu/ubuntu noble InRelease' does not seem to provide it (sources.list entry misspelt?)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile email.l\n",
+        "%{\n",
+        "#include <stdio.h>\n",
+        "%}\n",
+        "\n",
+        "%%\n",
+        "^[a-z][a-z0-9._]*@[a-z]+[.](com|edu|in)$ {\n",
+        "    printf(\"%s : VALID\\n\", yytext);\n",
+        "}\n",
+        "\n",
+        "^[^\\n]+ {\n",
+        "    printf(\"%s : INVALID\\n\", yytext);\n",
+        "}\n",
+        "\n",
+        "\\n ;\n",
+        "%%\n",
+        "\n",
+        "int main()\n",
+        "{\n",
+        "    yylex();\n",
+        "    return 0;\n",
+        "}\n",
+        "\n",
+        "int yywrap()\n",
+        "{\n",
+        "    return 1;\n",
+        "}"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "mcKNy9SlfE5Y",
+        "outputId": "ec4b3998-424f-470c-cb45-9abca1d1482e"
+      },
+      "execution_count": 29,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting email.l\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flex email.l\n",
+        "!gcc lex.yy.c -o email"
+      ],
+      "metadata": {
+        "id": "eHXMJAaEfT0o"
+      },
+      "execution_count": 30,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile input.txt\n",
+        "student_01@university.edu\n",
+        "abc.xyz@college.in\n",
+        "01student@college.com\n",
+        "student@college.xyz"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "OviU3ppYhrl7",
+        "outputId": "3cf9207f-f29a-4ed9-9fbc-1bb6d173be32"
+      },
+      "execution_count": 31,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting input.txt\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!./email < input.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8ok7ZxwofclC",
+        "outputId": "04c915fe-85fd-4118-862d-bedabf4746e3"
+      },
+      "execution_count": 32,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "student_01@university.edu : VALID\n",
+            "abc.xyz@college.in : VALID\n",
+            "01student@college.com : INVALID\n",
+            "student@college.xyz : INVALID\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Student Marks Analyzer**"
+      ],
+      "metadata": {
+        "id": "ZpxbJi5jinDj"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!apt-get update -qq\n",
+        "!apt-get install -y flex gcc -qq"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "XqPBV1NLgBDN",
+        "outputId": "36192dd3-50c5-4cd1-bf46-bdd5d46bb14c"
+      },
+      "execution_count": 33,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "W: Skipping acquire of configured file 'main/source/Sources' as repository 'https://r2u.stat.illinois.edu/ubuntu noble InRelease' does not seem to provide it (sources.list entry misspelt?)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile marks.l\n",
+        "%{\n",
+        "#include <stdio.h>\n",
+        "#include <stdlib.h>\n",
+        "\n",
+        "int total_students = 0;\n",
+        "int passed = 0;\n",
+        "int failed = 0;\n",
+        "int total_marks = 0;\n",
+        "%}\n",
+        "\n",
+        "%%\n",
+        "[A-Za-z0-9]+[ \\t]+[0-9]+ {\n",
+        "    char *p = yytext;\n",
+        "\n",
+        "    while (*p != ' ' && *p != '\\t')\n",
+        "        p++;\n",
+        "\n",
+        "    while (*p == ' ' || *p == '\\t')\n",
+        "        p++;\n",
+        "\n",
+        "    int marks = atoi(p);\n",
+        "\n",
+        "    total_students++;\n",
+        "    total_marks += marks;\n",
+        "\n",
+        "    if (marks >= 50)\n",
+        "        passed++;\n",
+        "    else\n",
+        "        failed++;\n",
+        "}\n",
+        "\n",
+        "\\n ;\n",
+        ". ;\n",
+        "%%\n",
+        "\n",
+        "int main()\n",
+        "{\n",
+        "    yylex();\n",
+        "\n",
+        "    printf(\"Total Students : %d\\n\", total_students);\n",
+        "    printf(\"Passed Students : %d\\n\", passed);\n",
+        "    printf(\"Failed Students : %d\\n\", failed);\n",
+        "    printf(\"Average Marks : %.1f\\n\",\n",
+        "           (float)total_marks / total_students);\n",
+        "\n",
+        "    return 0;\n",
+        "}\n",
+        "\n",
+        "int yywrap()\n",
+        "{\n",
+        "    return 1;\n",
+        "}"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "m1uuuKpSgpOq",
+        "outputId": "0cb6de24-ee5a-4360-d780-a7b7df5882c0"
+      },
+      "execution_count": 34,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting marks.l\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flex marks.l\n",
+        "!gcc lex.yy.c -o marks"
+      ],
+      "metadata": {
+        "id": "90gu7hLagv84"
+      },
+      "execution_count": 35,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile marks.txt\n",
+        "CS101 78\n",
+        "CS102 45\n",
+        "CS103 90\n",
+        "CS104 32\n",
+        "CS105 66"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Qo1K_Uowg3YK",
+        "outputId": "bf064995-9c66-42fb-83ec-30b14eeafb4d"
+      },
+      "execution_count": 36,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting marks.txt\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!./marks < marks.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "lo2QK9Jlg7w4",
+        "outputId": "0fa92dff-eea4-42e8-d93c-486015681654"
+      },
+      "execution_count": 37,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Total Students : 5\n",
+            "Passed Students : 3\n",
+            "Failed Students : 2\n",
+            "Average Marks : 62.2\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**Question 3: Electricity Bill Usage Analyzer**"
+      ],
+      "metadata": {
+        "id": "MeIsARNSh4DU"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!apt-get update -qq\n",
+        "!apt-get install -y flex gcc -qq"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "k3EXE7AWh6bZ",
+        "outputId": "8b334bcc-3e8e-44fa-f0f4-f9453863efa7"
+      },
+      "execution_count": 38,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "W: Skipping acquire of configured file 'main/source/Sources' as repository 'https://r2u.stat.illinois.edu/ubuntu noble InRelease' does not seem to provide it (sources.list entry misspelt?)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile electricity.l\n",
+        "%{\n",
+        "#include <stdio.h>\n",
+        "#include <stdlib.h>\n",
+        "\n",
+        "int total_consumers = 0;\n",
+        "int low = 0;\n",
+        "int medium = 0;\n",
+        "int high = 0;\n",
+        "int total_units = 0;\n",
+        "%}\n",
+        "\n",
+        "%%\n",
+        "[A-Za-z0-9]+[ \\t]+[0-9]+ {\n",
+        "    char *p = yytext;\n",
+        "\n",
+        "    while (*p != ' ' && *p != '\\t')\n",
+        "        p++;\n",
+        "\n",
+        "    while (*p == ' ' || *p == '\\t')\n",
+        "        p++;\n",
+        "\n",
+        "    int units = atoi(p);\n",
+        "\n",
+        "    total_consumers++;\n",
+        "    total_units += units;\n",
+        "\n",
+        "    if (units <= 100)\n",
+        "        low++;\n",
+        "    else if (units <= 300)\n",
+        "        medium++;\n",
+        "    else\n",
+        "        high++;\n",
+        "}\n",
+        "\n",
+        "\\n ;\n",
+        ". ;\n",
+        "%%\n",
+        "\n",
+        "int main()\n",
+        "{\n",
+        "    yylex();\n",
+        "\n",
+        "    printf(\"Total Consumers : %d\\n\", total_consumers);\n",
+        "    printf(\"Low Usage Consumers : %d\\n\", low);\n",
+        "    printf(\"Medium Usage Consumers : %d\\n\", medium);\n",
+        "    printf(\"High Usage Consumers : %d\\n\", high);\n",
+        "    printf(\"Total Units Consumed : %d\\n\", total_units);\n",
+        "    printf(\"Average Units : %.2f\\n\",\n",
+        "           (float)total_units / total_consumers);\n",
+        "\n",
+        "    return 0;\n",
+        "}\n",
+        "\n",
+        "int yywrap()\n",
+        "{\n",
+        "    return 1;\n",
+        "}"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "IqK6nWfdiA7E",
+        "outputId": "3655d562-d53c-45e6-8703-e082a6a15b00"
+      },
+      "execution_count": 39,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting electricity.l\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flex electricity.l\n",
+        "!gcc lex.yy.c -o electricity"
+      ],
+      "metadata": {
+        "id": "cFQqc7fNiIcl"
+      },
+      "execution_count": 40,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile electricity.txt\n",
+        "EB101 85\n",
+        "EB102 150\n",
+        "EB103 420\n",
+        "EB104 275\n",
+        "EB105 60"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "cnHSCGCliRvH",
+        "outputId": "343feb79-c418-483f-8bbd-08680c3a3225"
+      },
+      "execution_count": 41,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Overwriting electricity.txt\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!./electricity < electricity.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Huhzlfx1iUny",
+        "outputId": "24f4483b-3b7d-4a70-a76b-3a9b4b08d20b"
+      },
+      "execution_count": 42,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Total Consumers : 5\n",
+            "Low Usage Consumers : 2\n",
+            "Medium Usage Consumers : 2\n",
+            "High Usage Consumers : 1\n",
+            "Total Units Consumed : 990\n",
+            "Average Units : 198.00\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
